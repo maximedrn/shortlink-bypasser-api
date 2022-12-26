@@ -46,7 +46,7 @@ app.get('/', async (request, response) => {
         const message = success ? data.destination : NO_RESULT;
         
         if (success) {  // Display the result in the logs.
-            console.info(`[${counter}] ${parameter.url} -> ${message}`)
+            console.info(`[${counter}] ${parameter.url} -> ${message}`);
             counter++;
         }
         
