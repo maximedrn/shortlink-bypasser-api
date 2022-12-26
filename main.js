@@ -8,6 +8,9 @@ import { API } from './const.js';
 import { METHOD, NO_PARAMETERS, NO_URL, NO_RESULT } from './errors.js';
 
 
+let counter = 0; // Counter.
+
+
 // Middlewares.
 const app = express();
 app.use(express.json());
@@ -41,6 +44,12 @@ app.get('/', async (request, response) => {
         // Check the result and change the success value.
         const success = data.success && !!data.destination;
         const message = success ? data.destination : NO_RESULT;
+        
+        if (success) {  // Display the result in the logs.
+            console.info(`[${counter}] ${parameter.url} -> ${message}`)
+            counter++;
+        }
+        
         response.json({ success, message });
     }
 });
