@@ -29,27 +29,35 @@ app.delete('/', (_, response) => response.json(METHOD));
 
 
 app.get('/', async (request, response) => {
-    // Get the paramaters from the GET request.
-    const parameters = request.query;
+    try {
+        // Get the paramaters from the GET request.
+        const parameters = request.query;
 
-    if (!parameters) response.json(NO_PARAMETERS);
-    else if (!parameters.url) response.json(NO_URL);
-    else {
-        const url = API + parameters.url;
-        const data = await fetch(url).then(result => {
-            return result.ok ? result.json() : result.text()
-                .then(error => { throw JSON.parse(error) })
-        }).catch(error => { return error });
+        if (!parameters) response.json(NO_PARAMETERS);
+        else if (!parameters.url) response.json(NO_URL);
+        else {
+            const url = API + parameters.url;
+            const data = await fetch(url).then(result => {
+                return result.ok ? result.json() : result.text()
+                    .then(error => { throw JSON.parse(error) })
+            }).catch(error => { return error });
 
-        // Check the result and change the success value.
-        const success = data.success && !!data.destination;
-        const message = success ? data.destination : NO_RESULT;
-        
-        if (success) {  // Display the result in the logs.
-            console.info(`[${counter}] ${parameter.url} -> ${message}`);
-            counter++;
+            // Check the result and change the success value.
+            const success = data.success && !!data.destination;
+            const message = success ? data.destination : NO_RESULT;
+
+            if (success) {  // Display the result in the logs.
+                console.info(`[${counter}] ${parameters.url} -> ${message}`);
+                counter++;
+            }
+
+            response.json({ success, message });
         }
-        
-        response.json({ success, message });
+    } catch (error) {
+        console.error(error);
+        response.json({
+            success: false,
+            message: `Something went wrong: ${error}`
+        });
     }
 });
